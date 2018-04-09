@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ chapter }}</title>
+</head>
+<body>
+<h1>{{ chapter }}</h1>
+<a href="/">INICIO</a>
+<h3>Folders</h3>
+{% for folder in folders %}
+    <p><a href="/chapter/{{ chapter }}{{ folder }}/">{{ folder }}</a></p>
+{% endfor %}
+
+<h3>Files</h3>
+{% for file in files %}
+    <p><a href="#">{{ file }}</a></p>
+{% endfor %}
+</body>
+</html>

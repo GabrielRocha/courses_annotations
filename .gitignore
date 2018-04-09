@@ -9,6 +9,7 @@ __pycache__/
 *.so
 .course
 .idea
+settings.py
 
 # Distribution / packaging
 .Python

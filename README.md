@@ -28,3 +28,18 @@ course
 ```
 
 #### Page Example
+
+
+
+#### Build Project
+
+```bash
+pip install -r requirements.pip
+```
+
+
+#### Run
+```bash
+cd course_organizer
+python app.py
+```
