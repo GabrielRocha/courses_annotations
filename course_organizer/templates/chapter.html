@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ chapter }}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        textarea {
+          width: 420px;
+          height: 210px;
+        }
+    </style>
 </head>
 <body>
 <h1>{{ chapter }}</h1>
@@ -13,8 +20,28 @@
 {% endfor %}
 
 <h3>Files</h3>
-{% for file in files %}
-    <p><a href="#">{{ file }}</a></p>
+{% for file_name, file in files %}
+    <p>
+        <h3>{{ file_name }}</h3>
+        <br/>
+         <video width="320" height="240" controls>
+          <source src="/static/{{ chapter }}{{ folder }}{{ file.video }}" type="video/mp4">
+        Your browser does not support the video tag.
+        </video>
+        <textarea class="text" link="/static/{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
+    </p>
 {% endfor %}
 </body>
+
+<script>
+    $(document).ready(function(){
+        $(".text").each(function() {
+            link = $(this).attr("link");
+            var source = $(this);
+            $.get(link, function(data) {
+                source.append(data.toString());
+            });
+        });
+    });
+</script>
 </html>
