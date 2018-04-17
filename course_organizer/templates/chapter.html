@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ chapter }}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/static/js/tinymce/tinymce.min.js"></script>
     <style>
         textarea {
           width: 420px;
@@ -24,12 +25,13 @@
     <p>
         <h3>{{ file_name }}</h3>
         <br/>
-         <video width="320" height="240" controls>
-          <source src="/static/{{ chapter }}{{ folder }}{{ file.video }}" type="video/mp4">
+         <video width="50%" height="50%" controls>
+          <source src="/file/{{ chapter }}{{ folder }}{{ file.video }}" type="video/mp4">
         Your browser does not support the video tag.
         </video>
-        <textarea class="text" link="/static/{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
+        <textarea class="text" link="/file/{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
     </p>
+    <hr>
 {% endfor %}
 </body>
 
@@ -43,5 +45,30 @@
             });
         });
     });
+    tinymce.init({
+        selector: 'textarea',
+        height: 'auto',
+        width: '50%',
+        menubar: true,
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor textcolor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table contextmenu paste'
+        ],
+        toolbar: 'save | insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+        content_css: [
+            '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+            '//www.tinymce.com/css/codepen.min.css'],
+        setup: function (editor) {
+            editor.addButton('save', {
+              text: 'Save',
+              icon: "mce-ico mce-i-save",
+              onclick: function () {
+                editor.insertContent('&nbsp;<b>It\'s my button!</b>&nbsp;');
+              }
+            });
+          }
+    });
+
 </script>
 </html>
