@@ -1,7 +1,7 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, request
 from directory_inspect import get_files, find_directory
-from werkzeug.utils import secure_filename
 from settings import COURSE_PATH
+import os
 
 app = Flask(__name__, static_url_path="/static")
 
@@ -27,6 +27,18 @@ def chapter(chapter_name):
 @app.route("/file/<path:filename>")
 def send_files(filename):
     return send_from_directory(COURSE_PATH, filename)
+
+
+@app.route("/save", methods=["POST"])
+def save_files():
+    data = request.form
+    file_path = f'{COURSE_PATH}{data["file_name"]}'
+    if os.path.isfile(file_path):
+        with open(file_path, "w") as annotation:
+            annotation.write(data["text"])
+        return "Success Upload!"
+    return "Invalid File"
+
 
 if __name__ == "__main__":
     app.run(debug=True)

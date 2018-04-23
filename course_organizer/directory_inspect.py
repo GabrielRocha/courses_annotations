@@ -60,6 +60,5 @@ def group_by_type(chapter_name, files):
 def create_annotation(chapter_name, file):
     _file = file.split("|")[0]
     _file = f'{"".join(_file.split(".")[:-1])}.txt'
-    print(f'{COURSE_PATH}{chapter_name}/{_file}')
     if os.system(f"echo 'Annotation' > '{COURSE_PATH}{chapter_name}/{_file}'") == 0:
         return _file
