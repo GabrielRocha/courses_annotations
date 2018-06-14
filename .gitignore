@@ -9,6 +9,7 @@ __pycache__/
 *.so
 .course
 .idea
+.DS_Store
 settings.py
 
 # Distribution / packaging

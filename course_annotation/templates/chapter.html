@@ -31,7 +31,11 @@
           <source src="/file/{{ chapter }}{{ folder }}{{ file.video }}" type="video/mp4">
         Your browser does not support the video tag.
         </video>
-        <textarea class="annotation" video="{{ file_name }}" link="{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
+        {% if  file.annotation %}
+            <textarea class="annotation" video="{{ file_name }}" link="{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
+        {% else %}
+            <button>Create Annotation</button>
+        {% endif %}
     </p>
     <hr>
 {% endfor %}

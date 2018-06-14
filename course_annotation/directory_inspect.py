@@ -1,11 +1,11 @@
-from settings import COURSE_PATH, CREATE_ANNOTATION
+import settings
 from collections import defaultdict
 from itertools import groupby
 import re
 import os
 
 
-def get_files(path=COURSE_PATH):
+def get_files(path=settings.COURSE_PATH):
     ''' Find sub folders and files on the path'''
     if path[-1] != "/":
         path += "/"
@@ -43,17 +43,17 @@ def group_by_type(chapter_name, files):
     valid_files.sort()
     group_files = groupby(valid_files, lambda x: x.split(".")[0])
     video_and_annotation_files = defaultdict(dict)
-    for x, iter in group_files:
+    for _file, iter in group_files:
         file = "|".join(iter)
-        video = re.search("( |\w|-|[0-9])*\.mp4", file)
-        annotation = re.search("( |\w|-|[0-9])*\.txt", file)
+        video = re.search(f"( |\w|-|[0-9])*\.{settings.EXTENSION_VIDEO}", file)
+        annotation = re.search("( |\w|-|[0-9])*\.{settings.EXTENSION_ANNOTATION}", file)
         if video:
-            video_and_annotation_files[x]["video"] = video.group()
+            video_and_annotation_files[_file]["video"] = video.group()
         if annotation:
-            video_and_annotation_files[x]["annotation"] = annotation.group()
+            video_and_annotation_files[_file]["annotation"] = annotation.group()
             continue
-        elif CREATE_ANNOTATION:
-            video_and_annotation_files[x]["annotation"] = create_annotation(chapter_name, file)
+        elif settings.CREATE_ANNOTATION:
+            video_and_annotation_files[_file]["annotation"] = create_annotation(chapter_name, file)
     return video_and_annotation_files
 
 
