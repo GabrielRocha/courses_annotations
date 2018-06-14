@@ -43,3 +43,8 @@ pip install -r requirements.pip
 cd course_organizer
 python app.py
 ```
+
+#### Tests
+```bash
+pytest
+```

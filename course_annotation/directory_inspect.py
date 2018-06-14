@@ -5,6 +5,10 @@ import re
 import os
 
 
+REGEX_VIDEO = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_VIDEO}")
+REGEX_ANNOTATION = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_ANNOTATION}")
+
+
 def get_files(path=settings.COURSE_PATH):
     ''' Find sub folders and files on the path'''
     if path[-1] != "/":
@@ -39,26 +43,17 @@ def find_directory(chapter_name, couse_structure):
 
 
 def group_by_type(chapter_name, files):
-    valid_files = [file for file in files if file.endswith(("mp4", "txt"))]
+    valid_files = [file for file in files]
     valid_files.sort()
     group_files = groupby(valid_files, lambda x: x.split(".")[0])
     video_and_annotation_files = defaultdict(dict)
     for _file, iter in group_files:
         file = "|".join(iter)
-        video = re.search(f"( |\w|-|[0-9])*\.{settings.EXTENSION_VIDEO}", file)
-        annotation = re.search("( |\w|-|[0-9])*\.{settings.EXTENSION_ANNOTATION}", file)
+        video = REGEX_VIDEO.search(file)
+        annotation = REGEX_ANNOTATION.search(file)
         if video:
             video_and_annotation_files[_file]["video"] = video.group()
         if annotation:
             video_and_annotation_files[_file]["annotation"] = annotation.group()
             continue
-        elif settings.CREATE_ANNOTATION:
-            video_and_annotation_files[_file]["annotation"] = create_annotation(chapter_name, file)
     return video_and_annotation_files
-
-
-def create_annotation(chapter_name, file):
-    _file = file.split("|")[0]
-    _file = f'{"".join(_file.split(".")[:-1])}.txt'
-    if os.system(f"echo 'Annotation' > '{COURSE_PATH}{chapter_name}/{_file}'") == 0:
-        return _file
