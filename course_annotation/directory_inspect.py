@@ -1,9 +1,9 @@
-import settings
+import os
+import re
 from collections import defaultdict
 from itertools import groupby
-import re
-import os
 
+from . import settings
 
 REGEX_VIDEO = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_VIDEO}")
 REGEX_ANNOTATION = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_ANNOTATION}")

@@ -1,11 +1,13 @@
-from collections import defaultdict
-from unittest import mock
-import pytest
-import directory_inspect
 import os
+from collections import defaultdict
+
+import pytest
+
+from course_annotation import directory_inspect
 
 BASE_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/fixtures/'
 directory_inspect.COURSE_PATH = BASE_DIR
+
 
 @pytest.fixture
 def files():
@@ -62,4 +64,4 @@ def test_group_by_type():
 def test_find_directory_by_path_url(files):
     folders, files = directory_inspect.find_directory("course/chapter_2/folder", files)
     assert folders == {}
-    assert files ==  {'example_2_1': {'video': 'example_2_1.mp4'}}
+    assert files == {'example_2_1': {'video': 'example_2_1.mp4'}}
