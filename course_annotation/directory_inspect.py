@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 from itertools import groupby
 
-from . import settings
+import settings
 
 REGEX_VIDEO = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_VIDEO}")
 REGEX_ANNOTATION = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_ANNOTATION}")
@@ -23,8 +23,8 @@ def get_files(path=settings.COURSE_PATH):
                 if under_level in index:
                     index = index[under_level]['folders']
                 else:
-                    files = group_by_type(file_path, [file for file in files
-                                                      if not re.search("^\.", file)])
+                    files = group_by_type([file for file in files
+                                           if not re.search("^\.", file)])
                     index[under_level] = defaultdict(dict)
                     index[under_level]['folders'] = defaultdict(dict)
                     index[under_level]['files'] = files
@@ -42,7 +42,7 @@ def find_directory(chapter_name, couse_structure):
     return directory, files
 
 
-def group_by_type(chapter_name, files):
+def group_by_type(files):
     valid_files = [file for file in files]
     valid_files.sort()
     group_files = groupby(valid_files, lambda x: x.split(".")[0])

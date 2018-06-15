@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import pytest
 
-from course_annotation import directory_inspect
+import directory_inspect
 
 BASE_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/fixtures/'
 directory_inspect.COURSE_PATH = BASE_DIR
@@ -58,7 +58,7 @@ def test_group_by_type():
     directory_inspect.CREATE_ANNOTATION = False
     files = ['example_3.mp4', 'image_example.png', 'text_example.pdf', 'example_3.html']
     expected = {"example_3": {"video": "example_3.mp4", "annotation": "example_3.html"}}
-    assert directory_inspect.group_by_type("", files) == expected
+    assert directory_inspect.group_by_type(files) == expected
 
 
 def test_find_directory_by_path_url(files):

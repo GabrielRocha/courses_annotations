@@ -1,6 +1,6 @@
 from flask import Flask, render_template, send_from_directory, request
-from .directory_inspect import get_files, find_directory
-from .settings import COURSE_PATH
+from directory_inspect import get_files, find_directory
+from settings import COURSE_PATH
 import os
 
 app = Flask(__name__, static_url_path="/static")
