@@ -1,12 +1,17 @@
 from flask import Flask, render_template, send_from_directory, request
 from directory_inspect import get_files, find_directory
-from settings import COURSE_PATH
+from settings import COURSE_PATH, EXTENSION_ANNOTATION
 import os
 
 app = Flask(__name__, static_url_path="/static")
 
 
 COUSE_STRUCTURE = get_files()
+
+
+def reload_structure():
+    global COUSE_STRUCTURE
+    COUSE_STRUCTURE = get_files()
 
 
 @app.route("/")
@@ -38,7 +43,18 @@ def save_files():
         with open(file_path, "w") as annotation:
             annotation.write(data["text"])
         return "Success Upload!"
-    return "Invalid File"
+    return file_path
+
+
+@app.route("/create", methods=["POST"])
+def create_file():
+    data = request.form
+    file_path = f'{COURSE_PATH}{data["file_name"]}.{EXTENSION_ANNOTATION}'
+    if not os.path.isfile(file_path):
+        open(file_path, "w").close()
+        reload_structure()
+        return "Annotation created!"
+    return "Fail to create the annotation!!!"
 
 
 if __name__ == "__main__":

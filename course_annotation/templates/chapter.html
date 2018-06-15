@@ -32,9 +32,9 @@
         Your browser does not support the video tag.
         </video>
         {% if  file.annotation %}
-            <textarea class="annotation" video="{{ file_name }}" link="{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
+            <textarea class="annotation" video="{{ file_name }}"  link="{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
         {% else %}
-            <button>Create Annotation</button>
+            <button class="create_annotation" file="{{ chapter }}{{ folder }}{{ file_name }}">Create Annotation</button>
         {% endif %}
     </p>
     <hr>
@@ -87,13 +87,26 @@
                       var path = $("#"+editor.id).attr("link");
                       var posting = $.post( "/save", { file_name: path, text: editor.getContent().toString()});
                       posting.done(function( data ) {
-                        alert(data);
+                            alert(data);
                       });
                   }
                 });
               }
         });
     });
+
+    $(".create_annotation").click(function(){
+        var file = $(this).attr("file");
+        var posting = $.post( "/create", { file_name: file });
+        posting.done(function( data ) {
+            alert(data);
+            if (String(data) == String("Annotation created!")) {
+                window.location.reload();
+            }
+        });
+    });
+
+
     function load_file(tag_id){
         var path = $("#" + tag_id).attr("link");
         $.get({cache: false, url: "/file/" + path}, function (data) {

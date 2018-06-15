@@ -52,7 +52,7 @@ def test_second_level_folder(client):
 def test_videos_in_second_level_folder(client):
     response = client.get('/chapter/chapter_2/folder/')
     video = 'source src="/file/chapter_2/folder/example_2_1.mp4"'
-    button = '<button>Create Annotation</button>'
+    button = '>Create Annotation</button>'
     html = response.data.decode()
     assert video in html
     assert button in html
