@@ -1,28 +1,42 @@
-from flask import Flask, render_template, send_from_directory, request
-from directory_inspect import get_files, find_directory
-from settings import COURSE_PATH, EXTENSION_ANNOTATION
+from flask import Flask, render_template, send_from_directory, request, redirect
+from directory_inspect import get_files, find_directory, analytics
+from settings import COURSE_PATH, ANNOTATION_EXTENSION, VIDEO_EXTENSION
 import os
 
 app = Flask(__name__, static_url_path="/static")
 
 
-COUSE_STRUCTURE = get_files()
+COURSE_STRUCTURE = get_files()
 
 
-def reload_structure():
-    global COUSE_STRUCTURE
-    COUSE_STRUCTURE = get_files()
+def _reload_structure():
+    global COURSE_STRUCTURE
+    COURSE_STRUCTURE = get_files()
+
+
+@app.route("/reload")
+def reload():
+    _reload_structure()
+    return redirect("/")
 
 
 @app.route("/")
 def index():
-    context = {"folders": sorted(COUSE_STRUCTURE)}
+    folders, videos, annotation = analytics(COURSE_STRUCTURE)
+    context = {
+        'folders': COURSE_STRUCTURE,
+        'video_extension': VIDEO_EXTENSION,
+        'analytics': {
+            'folder': folders,
+            'videos': videos,
+            'annotation': annotation
+        }}
     return render_template("index.html", **context)
 
 
 @app.route("/chapter/<path:chapter_name>", methods=["GET"])
 def chapter(chapter_name):
-    directory, files = find_directory(chapter_name, COUSE_STRUCTURE)
+    directory, files = find_directory(chapter_name, COURSE_STRUCTURE)
     context = {
         "folders": sorted(directory),
         "files": sorted(files.items(), key=lambda x: x[0][1]),
@@ -49,13 +63,13 @@ def save_files():
 @app.route("/create", methods=["POST"])
 def create_file():
     data = request.form
-    file_path = f'{COURSE_PATH}{data["file_name"]}.{EXTENSION_ANNOTATION}'
+    file_path = f'{COURSE_PATH}{data["file_name"]}.{ANNOTATION_EXTENSION}'
     if not os.path.isfile(file_path):
         open(file_path, "w").close()
-        reload_structure()
+        _reload_structure()
         return "Annotation created!"
     return "Fail to create the annotation!!!"
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
