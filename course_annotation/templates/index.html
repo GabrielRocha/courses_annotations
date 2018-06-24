@@ -1,13 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h3>Folders</h3>
-{% for folder in folders %}
-    <p><a href="/chapter/{{ folder }}/">{{ folder }}</a></p>
-{% endfor %}
-</body>
-</html>
+{% extends "base_site.html" %}
+
+{% block title %} Dashboard 2 {% endblock title %}
+
+{% block stylesheets %}
+    {{ super() }}
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="content_videos">
+            <div class="row top_tiles">
+                <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="tile-stats">
+                        <div class="icon"><i class="fa fa-folder-open"></i></div>
+                        <div class="count">{{ analytics.folder }}</div>
+                        <h3>Folders</h3>
+                        <p>Total of folder in the path</p>
+                    </div>
+                </div>
+                <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="tile-stats">
+                        <div class="icon"><i class="fa fa-file-movie-o"></i></div>
+                        <div class="count">{{ analytics.videos }}</div>
+                        <h3>Videos</h3>
+                        <p>Total of videos in the path</p>
+                    </div>
+                </div>
+                <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="tile-stats">
+                        <div class="icon"><i class="fa fa-edit"></i></div>
+                        <div class="count">{{ analytics.annotation }}</div>
+                        <h3>Annotations</h3>
+                        <p>Total of annotations in the path</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                {% for folder, items in (folders.items()|sort(true))[:3] %}
+                    <div class="col-md-4">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h4>{{ folder }}</h4>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li class="dropdown">
+                                    <a></a>
+                                </li>
+                                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                                <li><a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            {% for item, value in items.files.items() %}
+                                <article class="media event">
+                                    <a class="pull-left date">
+                                        <p class="month">{{ video_extension.upper() }}</p>
+                                    </a>
+                                    <div class="media-body">
+                                        <a class="title" href="/chapter/{{ folder }}/">{{ item }}</a>
+                                        <p>
+                                            Annotation:
+                                            {% if value.annotation %}
+                                                <b><font color='green'>True</font></b>
+                                            {% else %}
+                                                <b><font color='red'>False</font></b>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
