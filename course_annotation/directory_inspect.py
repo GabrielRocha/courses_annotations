@@ -1,12 +1,13 @@
+from itertools import groupby
+from collections import OrderedDict, defaultdict
 import os
 import re
-from collections import defaultdict
-from itertools import groupby
+
 
 import settings
 
-REGEX_VIDEO = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_VIDEO}")
-REGEX_ANNOTATION = re.compile(f"( |\w|-|[0-9])*\.{settings.EXTENSION_ANNOTATION}")
+REGEX_VIDEO = re.compile(f"( |\w|-|[0-9])*\.{settings.VIDEO_EXTENSION}")
+REGEX_ANNOTATION = re.compile(f"( |\w|-|[0-9])*\.{settings.ANNOTATION_EXTENSION}")
 
 
 def get_files(path=settings.COURSE_PATH):
@@ -19,7 +20,6 @@ def get_files(path=settings.COURSE_PATH):
         if root_without_path[0]:
             index = directories
             for level, under_level in enumerate(root_without_path, start=1):
-                file_path = "/".join(root_without_path[:level])
                 if under_level in index:
                     index = index[under_level]['folders']
                 else:
@@ -27,7 +27,7 @@ def get_files(path=settings.COURSE_PATH):
                                            if not re.search("^\.", file)])
                     index[under_level] = defaultdict(dict)
                     index[under_level]['folders'] = defaultdict(dict)
-                    index[under_level]['files'] = files
+                    index[under_level]['files'] = OrderedDict(sorted(files.items(), key=lambda x: x[0][1]))
     return directories
 
 
@@ -57,3 +57,18 @@ def group_by_type(files):
             video_and_annotation_files[_file]["annotation"] = annotation.group()
             continue
     return video_and_annotation_files
+
+
+def statistics(folders):
+    folder = len(folders)
+    videos = len(folders.get('files', []))
+    annotations = 0
+    for item, values in folders.items():
+        _folder, _files, _annotation = statistics(values.get('folders', {}))
+        folder += _folder
+        videos += len(values['files']) + _files
+        for _, video in values['files'].items():
+            if 'annotation' in video:
+                annotations += 1
+        annotations += _annotation
+    return folder, videos, annotations

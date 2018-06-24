@@ -1,5 +1,5 @@
 from flask import Flask, render_template, send_from_directory, request, redirect
-from directory_inspect import get_files, find_directory, analytics
+from directory_inspect import get_files, find_directory, statistics
 from settings import COURSE_PATH, ANNOTATION_EXTENSION, VIDEO_EXTENSION
 import os
 
@@ -22,7 +22,7 @@ def reload():
 
 @app.route("/")
 def index():
-    folders, videos, annotation = analytics(COURSE_STRUCTURE)
+    folders, videos, annotation = statistics(COURSE_STRUCTURE)
     context = {
         'folders': COURSE_STRUCTURE,
         'video_extension': VIDEO_EXTENSION,
