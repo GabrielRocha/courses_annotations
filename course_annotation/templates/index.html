@@ -13,7 +13,7 @@
                 <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                     <div class="tile-stats">
                         <div class="icon"><i class="fa fa-folder-open"></i></div>
-                        <div class="count">{{ analytics.folder }}</div>
+                        <div class="count">{{ statistics.count_folder }}</div>
                         <h3>Folders</h3>
                         <p>Total of folder in the path</p>
                     </div>
@@ -21,7 +21,7 @@
                 <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                     <div class="tile-stats">
                         <div class="icon"><i class="fa fa-file-movie-o"></i></div>
-                        <div class="count">{{ analytics.videos }}</div>
+                        <div class="count">{{ statistics.count_videos }}</div>
                         <h3>Videos</h3>
                         <p>Total of videos in the path</p>
                     </div>
@@ -29,7 +29,7 @@
                 <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                     <div class="tile-stats">
                         <div class="icon"><i class="fa fa-edit"></i></div>
-                        <div class="count">{{ analytics.annotation }}</div>
+                        <div class="count">{{ statistics.count_annotations }}</div>
                         <h3>Annotations</h3>
                         <p>Total of annotations in the path</p>
                     </div>
@@ -37,7 +37,7 @@
             </div>
 
             <div class="row">
-                {% for folder, items in (folders.items()|sort(true))[:3] %}
+                {% for folder, items in (statistics.folder_videos|sort) %}
                     <div class="col-md-4">
                     <div class="x_panel">
                         <div class="x_title">

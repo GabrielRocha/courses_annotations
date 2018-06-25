@@ -22,15 +22,11 @@ def reload():
 
 @app.route("/")
 def index():
-    folders, videos, annotation = statistics(COURSE_STRUCTURE)
     context = {
         'folders': COURSE_STRUCTURE,
         'video_extension': VIDEO_EXTENSION,
-        'analytics': {
-            'folder': folders,
-            'videos': videos,
-            'annotation': annotation
-        }}
+        'statistics': statistics(COURSE_STRUCTURE)
+    }
     return render_template("index.html", **context)
 
 

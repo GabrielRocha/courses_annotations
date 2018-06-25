@@ -59,16 +59,23 @@ def group_by_type(files):
     return video_and_annotation_files
 
 
-def statistics(folders):
+def statistics(folders, folder_videos = []):
     folder = len(folders)
     videos = len(folders.get('files', []))
     annotations = 0
     for item, values in folders.items():
-        _folder, _files, _annotation = statistics(values.get('folders', {}))
-        folder += _folder
-        videos += len(values['files']) + _files
+        statistics_folder = statistics(values.get('folders', {}), folder_videos)
+        folder += statistics_folder['count_folder']
+        videos += len(values['files']) + statistics_folder['count_videos']
+        if values['files'] and len(folder_videos) < 3:
+            folder_videos.append((item, values))
         for _, video in values['files'].items():
             if 'annotation' in video:
                 annotations += 1
-        annotations += _annotation
-    return folder, videos, annotations
+        annotations += statistics_folder['count_annotations']
+    return {
+        'count_folder': folder,
+        'count_videos': videos,
+        'count_annotations': annotations,
+        'folder_videos': folder_videos
+    }
