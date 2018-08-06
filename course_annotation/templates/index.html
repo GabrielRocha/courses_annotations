@@ -1,6 +1,6 @@
 {% extends "base_site.html" %}
 
-{% block title %} Dashboard 2 {% endblock title %}
+{% block title %} Home {% endblock title %}
 
 {% block stylesheets %}
     {{ super() }}
@@ -37,11 +37,13 @@
             </div>
 
             <div class="row">
-                {% for folder, items in (statistics.folder_videos|sort) %}
+                {% for path, folder, items in (statistics.folder_videos|sort) %}
                     <div class="col-md-4">
                     <div class="x_panel">
                         <div class="x_title">
-                            <h4>{{ folder }}</h4>
+                            <b class="video-title">
+                                <a class="title" href="/chapter{{ path }}">{{ folder }}</a>
+                            </b>
                             <ul class="nav navbar-right panel_toolbox">
                                 <li class="dropdown">
                                     <a></a>
@@ -60,7 +62,7 @@
                                         <p class="month">{{ video_extension.upper() }}</p>
                                     </a>
                                     <div class="media-body">
-                                        <a class="title" href="/chapter/{{ folder }}/">{{ item }}</a>
+                                        <a class="title" href="/chapter{{ path }}">{{ item }}</a>
                                         <p>
                                             Annotation:
                                             {% if value.annotation %}

@@ -50,8 +50,11 @@ html , body{
     font-size: 27px;
     margin: 13px 0 0 3px
 }
-.content_videos{
-    height: 92vh;
+.mce-tinymce{
+    width: 100% !important;
+}
+.left_col.scroll-view{
+    width: 100%;
 }
 .site_title img {
     max-height: 66px;
@@ -128,6 +131,9 @@ html , body{
 .profile_pic {
     width: 35%;
     float: left
+}
+.video-title{
+    font-size: 150%;
 }
 .img-circle.profile_img {
     width: 70%;
@@ -755,7 +761,6 @@ a:focus {
 }
 .panel_toolbox {
     float: right;
-    min-width: 70px
 }
 .panel_toolbox>li {
     float: left;
@@ -1489,7 +1494,7 @@ span.right {
 }
 @media (min-width: 992px) {
     footer {
-        margin-left: 14%;
+        /*margin-left: 14%;*/
     }
 }
 @media (min-width: 992px) {
