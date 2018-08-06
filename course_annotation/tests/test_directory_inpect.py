@@ -11,7 +11,6 @@ directory_inspect.COURSE_PATH = BASE_DIR
 
 @pytest.fixture
 def files():
-    directory_inspect.CREATE_ANNOTATION = False
     return directory_inspect.get_files(f'{BASE_DIR}/folder_tree')
 
 
