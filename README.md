@@ -1,6 +1,4 @@
 ### Course Organizer Template
-A new way of the access the files of saved course on your storage.
-List files and videos in the web page, using the path of the directory as the base to links.
 
 #### Example:
 ##### Folder Tree
