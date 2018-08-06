@@ -1,17 +1,16 @@
-from itertools import groupby
-from collections import OrderedDict, defaultdict
 import os
 import re
-
+from collections import OrderedDict, defaultdict
+from itertools import groupby
 
 import settings
 
-REGEX_VIDEO = re.compile(f"( |\w|-|[0-9])*\.{settings.VIDEO_EXTENSION}")
-REGEX_ANNOTATION = re.compile(f"( |\w|-|[0-9])*\.{settings.ANNOTATION_EXTENSION}")
+REGEX_VIDEO = re.compile(f'( |\w|-|[0-9])*\.{settings.VIDEO_EXTENSION}')
+REGEX_ANNOTATION = re.compile(f'( |\w|-|[0-9])*\.{settings.ANNOTATION_EXTENSION}')
 
 
 def get_files(path=settings.COURSE_PATH):
-    ''' Find sub folders and files on the path'''
+    """ Find sub folders and files on the path """
     if path[-1] != "/":
         path += "/"
     directories = defaultdict(dict)
@@ -32,7 +31,7 @@ def get_files(path=settings.COURSE_PATH):
 
 
 def find_directory(chapter_name, couse_structure):
-    ''' Find folder on dict using indexes split by / '''
+    """ Find folder on dict using indexes split by / """
     if chapter_name[-1] != "/":
         chapter_name += "/"
     directory = couse_structure
@@ -47,8 +46,8 @@ def group_by_type(files):
     valid_files.sort()
     group_files = groupby(valid_files, lambda x: x.split(".")[0])
     video_and_annotation_files = defaultdict(dict)
-    for _file, iter in group_files:
-        file = "|".join(iter)
+    for _file, _iter in group_files:
+        file = "|".join(_iter)
         video = REGEX_VIDEO.search(file)
         annotation = REGEX_ANNOTATION.search(file)
         if video:
@@ -59,11 +58,11 @@ def group_by_type(files):
     return video_and_annotation_files
 
 
-def statistics(folders, folder_videos=[], parents=""):
-    '''
+def statistics(folders, folder_videos=list(), parents=""):
+    """
     Return total of folders, videos and annotations in the course
     and three folders that contains videos
-    '''
+    """
     folder = len(folders)
     videos = len(folders.get('files', []))
     annotations = 0

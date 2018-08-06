@@ -1,7 +1,15 @@
-from flask import Flask, render_template, send_from_directory, request, redirect
-from directory_inspect import get_files, find_directory, statistics
-from settings import COURSE_PATH, ANNOTATION_EXTENSION, VIDEO_EXTENSION
 import os
+
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+)
+
+from directory_inspect import find_directory, get_files, statistics
+from settings import ANNOTATION_EXTENSION, COURSE_PATH, VIDEO_EXTENSION
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -55,7 +63,7 @@ def save_files():
             with open(file_path, 'w') as annotation:
                 annotation.write(data['text'])
             return 'Success!'
-        except:
+        except Exception:
             return 'Fail!'
     return file_path
 
