@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 import app as flask_application
@@ -11,9 +13,9 @@ def app():
 
 
 @pytest.mark.parametrize('tag', [
-    '<a href="/chapter/chapter_1/">chapter_1</a>',
-    '<a href="/chapter/chapter_2/">chapter_2</a>',
-    '<a href="/chapter/chapter_3/">chapter_3</a>'
+    '<a class="title" href="/chapter/chapter_1">chapter_1</a>',
+    '<a class="title" href="/chapter/chapter_2">chapter_2</a>',
+    '<a href="/chapter/chapter_3">chapter_3</a>'
 ])
 def test_index(client, tag):
     response = client.get('/')
@@ -39,20 +41,23 @@ def test_index(client, tag):
 ])
 def test_folder_videos_and_annotations(client, url, file, annotation):
     response = client.get(url)
-    assert file in response.data.decode()
+    html = re.sub(r'\n|  ', '', response.data.decode())
+    assert file in html
     assert annotation in response.data.decode()
 
 
 def test_second_level_folder(client):
     response = client.get('/chapter/chapter_2/')
-    tag = '<a href="/chapter/chapter_2/folder/">folder</a>'
-    assert tag in response.data.decode()
+    tag = '<a href="/chapter/chapter_2/folder">folder</a>'
+    html = re.sub(r'\n|  ', '', response.data.decode())
+    assert tag in html
 
 
 def test_videos_in_second_level_folder(client):
     response = client.get('/chapter/chapter_2/folder/')
-    video = 'source src="/file/chapter_2/folder/example_2_1.mp4"'
-    button = '>Create Annotation</button>'
-    html = response.data.decode()
+    video = '<source src="/file/chapter_2/folder/example_2_1.mp4" type="video/mp4">'
+    button = '<button class="create_annotation btn btn-success"file="chapter_2/' \
+             'folder/example_2_1"><b>Create Annotation</b></button>'
+    html = re.sub(r'\n|  ', '', response.data.decode())
     assert video in html
     assert button in html

@@ -37,8 +37,8 @@ def find_directory(chapter_name, couse_structure):
         chapter_name += "/"
     directory = couse_structure
     for name in chapter_name.split("/")[:-1]:
-        files = directory[name]['files']
-        directory = directory[name]['folders']
+        files = directory[name].get('files', {})
+        directory = directory[name].get('folders', {})
     return directory, files
 
 
@@ -59,16 +59,21 @@ def group_by_type(files):
     return video_and_annotation_files
 
 
-def statistics(folders, folder_videos = []):
+def statistics(folders, folder_videos=[], parents=""):
+    '''
+    Return total of folders, videos and annotations in the course
+    and three folders that contains videos
+    '''
     folder = len(folders)
     videos = len(folders.get('files', []))
     annotations = 0
     for item, values in folders.items():
-        statistics_folder = statistics(values.get('folders', {}), folder_videos)
+        parent = f'{parents}/{item}'
+        statistics_folder = statistics(values.get('folders', {}), folder_videos, parent)
         folder += statistics_folder['count_folder']
         videos += len(values['files']) + statistics_folder['count_videos']
-        if values['files'] and len(folder_videos) < 3:
-            folder_videos.append((item, values))
+        if len(folder_videos) < 3 and values['files']:
+            folder_videos.append((parent, item, values))
         for _, video in values['files'].items():
             if 'annotation' in video:
                 annotations += 1
