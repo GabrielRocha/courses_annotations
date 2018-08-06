@@ -1,0 +1,64 @@
+<div class="left_col scroll-view">
+    <div class="navbar">
+        <a href="/" class="site_title">
+            <i class="fa fa-edit"></i>
+            <span>Annotations!</span>
+        </a>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <br/>
+
+    <!-- sidebar menu -->
+    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="menu_section">
+            <h3>Folders</h3>
+            <ul class="nav side-menu">
+                <li><a><i class="fa fa-sitemap"></i> Folder Tree <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                        {% for folder, values in folders.items()|sort %}
+                            <li>
+                            {% if values.folders %}
+                                <a>{{ folder }}<span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li class="sub_menu">
+                                        <a href="/chapter/{{ folder }}/">.</a>
+                                    </li>
+                                    {% for folder_level_two, values_level_two in values.folders.items()|sort %}
+                                        {% if values_level_two.folders %}
+                                            <li>
+                                                <a>{{ folder_level_two }}<span class="fa fa-chevron-down"></span></a>
+                                                <ul class="nav child_menu">
+                                                    {% for folder_level_three in values_level_two.folders|sort %}
+                                                        <li class="sub_menu">
+                                                            <a href="/chapter/{{ folder }}/{{ folder_level_two }}/">
+                                                                .
+                                                            </a>
+                                                        </li>
+                                                        <li class="sub_menu">
+                                                            <a href="/chapter/{{ folder }}/{{ folder_level_two }}/{{ folder_level_three }}">
+                                                                {{ folder_level_three }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                        {% else %}
+                                            <li>
+                                                <a href="/chapter/{{ folder }}/{{ folder_level_two }}">{{ folder_level_two }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <a href="/chapter/{{ folder }}">{{ folder }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /sidebar menu -->
+</div>

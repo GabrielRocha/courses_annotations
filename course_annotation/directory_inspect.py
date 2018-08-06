@@ -1,11 +1,16 @@
-from settings import COURSE_PATH, CREATE_ANNOTATION
-from collections import defaultdict
 from itertools import groupby
-import re
+from collections import OrderedDict, defaultdict
 import os
+import re
 
 
-def get_files(path=COURSE_PATH):
+import settings
+
+REGEX_VIDEO = re.compile(f"( |\w|-|[0-9])*\.{settings.VIDEO_EXTENSION}")
+REGEX_ANNOTATION = re.compile(f"( |\w|-|[0-9])*\.{settings.ANNOTATION_EXTENSION}")
+
+
+def get_files(path=settings.COURSE_PATH):
     ''' Find sub folders and files on the path'''
     if path[-1] != "/":
         path += "/"
@@ -15,15 +20,14 @@ def get_files(path=COURSE_PATH):
         if root_without_path[0]:
             index = directories
             for level, under_level in enumerate(root_without_path, start=1):
-                file_path = "/".join(root_without_path[:level])
                 if under_level in index:
                     index = index[under_level]['folders']
                 else:
-                    files = group_by_type(file_path, [file for file in files
-                                                      if not re.search("^\.", file)])
+                    files = group_by_type([file for file in files
+                                           if not re.search("^\.", file)])
                     index[under_level] = defaultdict(dict)
                     index[under_level]['folders'] = defaultdict(dict)
-                    index[under_level]['files'] = files
+                    index[under_level]['files'] = OrderedDict(sorted(files.items(), key=lambda x: x[0][1]))
     return directories
 
 
@@ -33,32 +37,50 @@ def find_directory(chapter_name, couse_structure):
         chapter_name += "/"
     directory = couse_structure
     for name in chapter_name.split("/")[:-1]:
-        files = directory[name]['files']
-        directory = directory[name]['folders']
+        files = directory[name].get('files', {})
+        directory = directory[name].get('folders', {})
     return directory, files
 
 
-def group_by_type(chapter_name, files):
-    valid_files = [file for file in files if file.endswith(("mp4", "txt"))]
+def group_by_type(files):
+    valid_files = [file for file in files]
     valid_files.sort()
     group_files = groupby(valid_files, lambda x: x.split(".")[0])
     video_and_annotation_files = defaultdict(dict)
-    for x, iter in group_files:
+    for _file, iter in group_files:
         file = "|".join(iter)
-        video = re.search("( |\w|-|[0-9])*\.mp4", file)
-        annotation = re.search("( |\w|-|[0-9])*\.txt", file)
+        video = REGEX_VIDEO.search(file)
+        annotation = REGEX_ANNOTATION.search(file)
         if video:
-            video_and_annotation_files[x]["video"] = video.group()
+            video_and_annotation_files[_file]["video"] = video.group()
         if annotation:
-            video_and_annotation_files[x]["annotation"] = annotation.group()
+            video_and_annotation_files[_file]["annotation"] = annotation.group()
             continue
-        elif CREATE_ANNOTATION:
-            video_and_annotation_files[x]["annotation"] = create_annotation(chapter_name, file)
     return video_and_annotation_files
 
 
-def create_annotation(chapter_name, file):
-    _file = file.split("|")[0]
-    _file = f'{"".join(_file.split(".")[:-1])}.txt'
-    if os.system(f"echo 'Annotation' > '{COURSE_PATH}{chapter_name}/{_file}'") == 0:
-        return _file
+def statistics(folders, folder_videos=[], parents=""):
+    '''
+    Return total of folders, videos and annotations in the course
+    and three folders that contains videos
+    '''
+    folder = len(folders)
+    videos = len(folders.get('files', []))
+    annotations = 0
+    for item, values in folders.items():
+        parent = f'{parents}/{item}'
+        statistics_folder = statistics(values.get('folders', {}), folder_videos, parent)
+        folder += statistics_folder['count_folder']
+        videos += len(values['files']) + statistics_folder['count_videos']
+        if len(folder_videos) < 3 and values['files']:
+            folder_videos.append((parent, item, values))
+        for _, video in values['files'].items():
+            if 'annotation' in video:
+                annotations += 1
+        annotations += statistics_folder['count_annotations']
+    return {
+        'count_folder': folder,
+        'count_videos': videos,
+        'count_annotations': annotations,
+        'folder_videos': folder_videos
+    }

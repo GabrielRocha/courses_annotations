@@ -1,5 +1,6 @@
 ### Course Organizer Template
 
+
 #### Example:
 ##### Folder Tree
 ```bash
@@ -30,7 +31,6 @@ course
 
 
 #### Build Project
-
 ```bash
 pip install -r requirements.pip
 ```
@@ -40,4 +40,9 @@ pip install -r requirements.pip
 ```bash
 cd course_organizer
 python app.py
+```
+
+#### Tests
+```bash
+pytest
 ```

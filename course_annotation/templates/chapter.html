@@ -1,114 +1,178 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv='cache-control' content='no-cache'>
-    <meta http-equiv='expires' content='0'>
-    <title>{{ chapter }}</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="/static/js/tinymce/tinymce.min.js"></script>
-    <style>
-        textarea {
-          width: 420px;
-          height: 210px;
-        }
-    </style>
-</head>
-<body>
-<h1>{{ chapter }}</h1>
-<a href="/">INICIO</a>
-<h3>Folders</h3>
-{% for folder in folders %}
-    <p><a href="/chapter/{{ chapter }}{{ folder }}/">{{ folder }}</a></p>
-{% endfor %}
+{% extends "base_site.html" %}
 
-<h3>Files</h3>
-{% for file_name, file in files %}
-    <p>
-        <h3>{{ file_name }}</h3>
-        <br/>
-         <video id="{{ file_name }}" width="100%" height="50%" controls>
-          <source src="/file/{{ chapter }}{{ folder }}{{ file.video }}" type="video/mp4">
-        Your browser does not support the video tag.
-        </video>
-        <textarea class="annotation" video="{{ file_name }}" link="{{ chapter }}{{ folder }}{{ file.annotation }}"></textarea>
-    </p>
-    <hr>
-{% endfor %}
-</body>
+{% block title %} {{ chapter }} {% endblock title %}
 
-<script>
-    $(document).ready(function(){
-        tinymce.init({
-            selector: 'textarea',
-            height: 'auto',
-            width: '100%',
-            menubar: true,
-            plugins: [
-                'advlist autolink lists link image charmap print preview anchor textcolor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table contextmenu paste'
-            ],
-            toolbar: 'save | reload | time_video | insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
-            content_css: [
-                '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
-                '//www.tinymce.com/css/codepen.min.css'],
-            init_instance_callback : function(editor){
-                  load_file(editor.id);
-            },
-            setup: function (editor) {
+{% block stylesheets %}
+    {{ super() }}
+{% endblock stylesheets %}
 
-                editor.addButton('reload', {
-                    text: 'Reload',
-                    icon: "mce-ico mce-i-reload",
-                    onclick: function () {
-                        load_file(editor.id);
-                  }
-                });
+{% block content %}
+    <div class="right_col" role="main">
+    <div class="content_videos">
+    <div class="x_panel">
+        <h6>{{ chapter }}</h6>
+    </div>
+    {% if folders_directory %}
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Folders</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <ul>
+                    {% for folder in folders_directory %}
+                        <li><a href="/chapter/{{ chapter }}/{{ folder }}/">{{ folder }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
 
-                editor.addButton('time_video', {
-                    text: 'Time Video',
-                    icon: "mce-ico mce-i-notice",
-                    onclick: function () {
-                        var video_id = $("#"+editor.id).attr("video");
-                        var video_time = $("[id='"+video_id+"']")[0].currentTime;
-                        editor.insertContent('<p><b>'+format_time(video_time)+'</b> - </p>');
-                  }
-                });
+    <h2>Videos</h2>
+    <div class="clearfix"></div>
 
-                editor.addButton('save', {
-                  text: 'Save',
-                  icon: "mce-ico mce-i-save",
-                  onclick: function () {
-                      var path = $("#"+editor.id).attr("link");
-                      var posting = $.post( "/save", { file_name: path, text: editor.getContent().toString()});
-                      posting.done(function( data ) {
-                        alert(data);
-                      });
-                  }
-                });
-              }
+    {% for file_name, file in files %}
+        <div class="x_panel" style="height: auto;">
+            <div class="x_title">
+                <b class="video-title">{{ file_name }}</b>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <video id="{{ file_name }}" width="100%" height="100%" controls>
+                            <source src="/file/{{ chapter }}/{{ file.video }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="col-md-6">
+                        {% if  file.annotation %}
+                            <textarea class="annotation" video="{{ file_name }}"
+                                      link="{{ chapter }}/{{ file.annotation }}"></textarea>
+                        {% else %}
+                            <button class="create_annotation btn btn-success"
+                                    file="{{ chapter }}/{{ folder }}{{ file_name }}">
+                                <b>Create Annotation</b>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <small>No videos</small>
+    {% endfor %}
+
+
+
+
+{% endblock content %}
+{% block javascripts %}
+    <script src="{{ url_for('static', filename='js/tinymce/tinymce.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('.collapsed')
+                .css('height', 'auto')
+                .find('.collapse-link i').toggleClass('fa-chevron-up fa-chevron-down').end()
+                .find('.x_content').css('display', 'none');
+            tinymce.init({
+                selector: 'textarea',
+                height: 'auto',
+                width: '100%',
+                menubar: true,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor textcolor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table contextmenu paste'
+                ],
+                toolbar: 'save | reload | time_video | insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
+                content_css: [
+                    '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+                    '//www.tinymce.com/css/codepen.min.css'],
+                init_instance_callback: function (editor) {
+                    load_file(editor.id);
+                },
+                setup: function (editor) {
+
+                    editor.addButton('reload', {
+                        text: 'Reload',
+                        icon: "mce-ico mce-i-reload",
+                        onclick: function () {
+                            load_file(editor.id);
+                        }
+                    });
+
+                    editor.addButton('time_video', {
+                        text: 'Time Video',
+                        icon: "mce-ico mce-i-notice",
+                        onclick: function () {
+                            var video_id = $("#" + editor.id).attr("video");
+                            var video_time = $("[id='" + video_id + "']")[0].currentTime;
+                            editor.insertContent('<p><b>' + format_time(video_time) + '</b> - </p>');
+                        }
+                    });
+
+                    editor.addButton('save', {
+                        text: 'Save',
+                        icon: "mce-ico mce-i-save",
+                        onclick: function () {
+                            var path = $("#" + editor.id).attr("link");
+                            var posting = $.post("/save", {file_name: path, text: editor.getContent().toString()});
+                            posting.done(function (data) {
+                                alert(data);
+                            });
+                        }
+                    });
+                }
+            });
         });
-    });
-    function load_file(tag_id){
-        var path = $("#" + tag_id).attr("link");
-        $.get({cache: false, url: "/file/" + path}, function (data) {
-          var iframe = $("#" + tag_id + "_ifr");
-          $("body", iframe.contents()).children().remove();
-          $("body", iframe.contents()).append(data.toString());
-       });
-    }
-      function format_time(time){
-        var seconds = Math.floor(time) % 60;
-        if (seconds < 10){
-            seconds = "0"+seconds;
-        }
-        var minutes = parseInt((Math.floor(time) / 60) % 60);
-        if (minutes < 10){
-            minutes = "0"+minutes;
-        }
-        return minutes+":"+seconds;
-    }
 
-</script>
-</html>
+        $(".create_annotation").click(function () {
+            var file = $(this).attr("file");
+            var posting = $.post("/create", {file_name: file});
+            posting.done(function (data) {
+                alert(data);
+                if (String(data) == String("Annotation created!")) {
+                    window.location.reload();
+                }
+            });
+        });
+
+
+        function load_file(tag_id) {
+            var path = $("#" + tag_id).attr("link");
+            $.get({cache: false, url: "/file/" + path}, function (data) {
+                var iframe = $("#" + tag_id + "_ifr");
+                $("body", iframe.contents()).children().remove();
+                $("body", iframe.contents()).append(data.toString());
+            });
+        }
+
+        function format_time(time) {
+            var seconds = Math.floor(time) % 60;
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            var minutes = parseInt((Math.floor(time) / 60) % 60);
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            return minutes + ":" + seconds;
+        }
+
+    </script>
+{% endblock %}
