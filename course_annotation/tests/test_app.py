@@ -12,7 +12,7 @@ def request(client, url):
 
 @pytest.fixture
 def app(course_structure):
-    flask_application.COUSE_STRUCTURE = course_structure
+    flask_application.COURSE_STRUCTURE = course_structure
     return flask_application.app
 
 

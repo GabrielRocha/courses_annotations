@@ -1,12 +1,7 @@
 import os
 
-from flask import (
-    Flask,
-    redirect,
-    render_template,
-    request,
-    send_from_directory,
-)
+from flask import (Flask, redirect, render_template, request,
+                   send_from_directory)
 
 from directory_inspect import find_directory, get_files, statistics
 from settings import ANNOTATION_EXTENSION, COURSE_PATH, VIDEO_EXTENSION
