@@ -22,11 +22,19 @@ def get_files(path=settings.COURSE_PATH):
                 if under_level in index:
                     index = index[under_level]['folders']
                 else:
-                    files = group_by_type([file for file in files
-                                           if not re.search("^\.", file)])
-                    index[under_level] = defaultdict(dict)
-                    index[under_level]['folders'] = defaultdict(dict)
-                    index[under_level]['files'] = OrderedDict(sorted(files.items(), key=lambda x: x[0][1]))
+                    get_folder_file(files, under_level, index)
+        else:
+            folder = root.split("/")[-2]
+            get_folder_file(files, folder, directories)
+    return directories
+
+
+def get_folder_file(files, root, directories):
+    files = group_by_type([file for file in files
+                           if not re.search("^\.", file)])
+    directories[root] = defaultdict(dict)
+    directories[root]['folders'] = defaultdict(dict)
+    directories[root]['files'] = OrderedDict(sorted(files.items(), key=lambda x: x[0][1]))
     return directories
 
 

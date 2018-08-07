@@ -6,7 +6,6 @@ import pytest
 import directory_inspect
 
 BASE_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/fixtures/'
-directory_inspect.COURSE_PATH = BASE_DIR
 
 
 @pytest.fixture
@@ -49,7 +48,7 @@ def test_chapter_3_on_the_files_list(files):
 @pytest.mark.parametrize("path", ["/folder_tree/", "/folder_tree"])
 def test_slash_at_end_path(path):
     directory_inspect.CREATE_ANNOTATION = False
-    files_and_folders = directory_inspect.get_files(BASE_DIR+path)
+    files_and_folders = directory_inspect.get_files(BASE_DIR + path)
     assert "course" in files_and_folders.keys()
 
 
@@ -61,6 +60,30 @@ def test_group_by_type():
 
 
 def test_find_directory_by_path_url(files):
-    folders, files = directory_inspect.find_directory("course/chapter_2/folder", files)
+    folders, _files = directory_inspect.find_directory("course/chapter_2/folder", files)
     assert folders == {}
-    assert files == {'example_2_1': {'video': 'example_2_1.mp4'}}
+    assert _files == {'example_2_1': {'video': 'example_2_1.mp4'}}
+
+
+def test_get_folder_file():
+    files = ['example_1.mp4', 'example_2.mp4', '\.']
+    expected_files = {
+        'example_1': {
+            'video': 'example_1.mp4',
+        },
+        'example_2': {
+            'video': 'example_2.mp4',
+        }
+    }
+    new_dict = directory_inspect.get_folder_file(files, 'root', dict())
+    assert 'root' in new_dict
+    assert ('folder' and 'files') in new_dict['root']
+    assert dict(new_dict['root']['files']) == expected_files
+
+
+def test_only_one_folder():
+    files = directory_inspect.get_files(f'{BASE_DIR}/folder_tree/course/chapter_1')
+    expected = {'example': {'video': 'example.mp4', "annotation": "example.html"}}
+    assert ('folders' and 'files') in files['chapter_1']
+    assert files['chapter_1']['folders'] == {}
+    assert files['chapter_1']['files'] == expected
