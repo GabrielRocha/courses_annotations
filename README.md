@@ -1,8 +1,8 @@
 ### Course Organizer Template
 
 
-#### Example:
-##### Folder Tree
+## Example:
+### Folder Tree
 ```bash
 course
   ├── chapter_1
@@ -17,7 +17,7 @@ course
       └── text_example.pdf
 ```
 
-#### Menu Tree
+### Menu Tree
 ``` bash
 course
   ├── chapter_1
@@ -26,13 +26,15 @@ course
   └── chapter_3
 ```
 
-#### Page Example
+### Page Example
 
+The user has to create the annotation for each video.
 
+![no_annotation](doc/images/no_annotation.png)
 
-#### Build and Run Project
+![annotation](doc/images/annotation.png)
 
-##### Configuration
+## Configuration
 Copy `local.env` to `.env`
 ```bash
 cp local.env .env
@@ -47,7 +49,12 @@ This file has 3 variables that you need configure
 * VIDEO_EXTENSION
     * Video extension.
 
-##### Development
+
+## Run Project
+
+Both environments below use the port **8000** and host **localhost**
+
+### Development
 You need the python `virtualenv`. Below has two ways to create, choose one.
 * [virtualenv](https://virtualenv.pypa.io/en/stable/) 
 * [pipenv](https://docs.pipenv.org/)
@@ -63,12 +70,12 @@ cd course_annotation
 python app.py
 ```
 
-##### Tests
+#### Tests
 ```bash
 pytest .
 ```
 
-##### Production
+### Production
 
 Technologies
 * [docker](https://www.docker.com/what-docker)
@@ -77,4 +84,11 @@ Technologies
 
 ```bash
 docker-compose up
+```
+
+## FYI
+
+If you need reload the course path, just access:
+```text
+http://localhost:8000/reload/
 ```
