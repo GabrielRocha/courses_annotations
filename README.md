@@ -1,20 +1,23 @@
-### Course Organizer Template
+### Annotations Organizer
 
+The goal is to create a management system for local videos annotations.
+Using local files the user could update, read and send to cloud the annotations without the system.
 
 ## Example:
 ### Folder Tree
 ```bash
 course
-  ├── chapter_1
-  │   └── example.mp4
-  ├── chapter_2
-  │   ├── example_2.mp4
-  │   └── folder
-  │       └── example_2_1.mp4
-  └── chapter_3
-      ├── example_3.mp4
-      ├── image_example.png
-      └── text_example.pdf
+    ├── chapter_1
+    │   ├── example.html
+    │   └── example.mp4
+    ├── chapter_2
+    │   ├── example_2.mp4
+    │   └── folder
+    │       └── example_2_1.mp4
+    └── chapter_3
+        ├── example_3.mp4
+        ├── image_example.png
+        └── text_example.pdf
 ```
 
 ### Menu Tree
@@ -22,6 +25,7 @@ course
 course
   ├── chapter_1
   ├── chapter_2
+  │   └── .
   │   └── folder   
   └── chapter_3
 ```
