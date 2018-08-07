@@ -30,19 +30,51 @@ course
 
 
 
-#### Build Project
+#### Build and Run Project
+
+##### Configuration
+Copy `local.env` to `.env`
 ```bash
-pip install -r requirements.pip
+cp local.env .env
 ```
 
+This file has 3 variables that you need configure
 
-#### Run
+* COURSE_PATH
+    * Course or Videos path
+* ANNOTATION_EXTENSION
+    * File extension that you want create
+* VIDEO_EXTENSION
+    * Video extension.
+
+##### Development
+You need the python `virtualenv`. Below has two ways to create, choose one.
+* [virtualenv](https://virtualenv.pypa.io/en/stable/) 
+* [pipenv](https://docs.pipenv.org/)
+
+**Install libs**
 ```bash
-cd course_organizer
+pip install -r requirements/development.pip
+```
+
+**Run the server**
+```bash
+cd course_annotation
 python app.py
 ```
 
-#### Tests
+##### Tests
 ```bash
-pytest
+pytest .
+```
+
+##### Production
+
+Technologies
+* [docker](https://www.docker.com/what-docker)
+* [docker-compose](https://docs.docker.com/compose/overview/)
+* [gunicorn](http://gunicorn.org/)
+
+```bash
+docker-compose up
 ```
