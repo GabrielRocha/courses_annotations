@@ -46,13 +46,22 @@ def chapter(chapter_name):
 
 @app.route('/file/<path:filename>/')
 def send_files(filename):
-    return send_from_directory(COURSE_PATH, filename)
+    print(COURSE_PATH, _get_file_path(filename))
+    return send_from_directory(COURSE_PATH, _get_file_path(filename))
+
+
+def _get_file_path(filename):
+    path = filename.split('/')
+    if len(COURSE_STRUCTURE) == 1 and path[0] in COURSE_PATH:
+        return path[-1]
+    return filename
 
 
 @app.route('/save', methods=['POST'])
 def save_files():
     data = request.form
-    file_path = f'{COURSE_PATH}/{data["file_name"]}'
+    filename = _get_file_path(data['file_name'])
+    file_path = f'{COURSE_PATH}/{filename}'
     if os.path.isfile(file_path):
         try:
             with open(file_path, 'w') as annotation:
@@ -66,7 +75,9 @@ def save_files():
 @app.route('/create', methods=['POST'])
 def create_file():
     data = request.form
-    file_path = f'{COURSE_PATH}/{data["file_name"]}.{ANNOTATION_EXTENSION}'
+    filename = _get_file_path(data['file_name'])
+    file_path = f'{COURSE_PATH}/{filename}.{ANNOTATION_EXTENSION}'
+
     if not os.path.isfile(file_path):
         open(file_path, 'w').close()
         _reload_structure()

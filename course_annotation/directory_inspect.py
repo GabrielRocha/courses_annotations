@@ -15,6 +15,7 @@ def get_files(path=settings.COURSE_PATH):
         path += "/"
     directories = defaultdict(dict)
     for root, folder, files, _ in os.fwalk(path):
+        files = [file for file in files if not re.search("^\.", file)]
         root_without_path = root.replace(path, "").split("/")
         if root_without_path[0]:
             index = directories
@@ -23,15 +24,14 @@ def get_files(path=settings.COURSE_PATH):
                     index = index[under_level]['folders']
                 else:
                     get_folder_file(files, under_level, index)
-        else:
+        elif files:
             folder = root.split("/")[-2]
             get_folder_file(files, folder, directories)
     return directories
 
 
 def get_folder_file(files, root, directories):
-    files = group_by_type([file for file in files
-                           if not re.search("^\.", file)])
+    files = group_by_type(files)
     directories[root] = defaultdict(dict)
     directories[root]['folders'] = defaultdict(dict)
     directories[root]['files'] = OrderedDict(sorted(files.items(), key=lambda x: x[0][1]))
@@ -66,17 +66,18 @@ def group_by_type(files):
     return video_and_annotation_files
 
 
-def statistics(folders, folder_videos=list(), parents=""):
+def statistics(folders, parents=""):
     """
     Return total of folders, videos and annotations in the course
     and three folders that contains videos
     """
+    folder_videos = []
     folder = len(folders)
     videos = len(folders.get('files', []))
     annotations = 0
     for item, values in folders.items():
         parent = f'{parents}/{item}'
-        statistics_folder = statistics(values.get('folders', {}), folder_videos, parent)
+        statistics_folder = statistics(values.get('folders', {}), parent)
         folder += statistics_folder['count_folder']
         videos += len(values['files']) + statistics_folder['count_videos']
         if len(folder_videos) < 3 and values['files']:
