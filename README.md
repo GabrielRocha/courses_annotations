@@ -48,6 +48,7 @@ This file has 3 variables that you need configure
 
 * COURSE_PATH
     * Course or Videos path
+      * ex: /home/user/videos/
 * ANNOTATION_EXTENSION
     * File extension that you want create
 * VIDEO_EXTENSION
