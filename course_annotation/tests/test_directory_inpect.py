@@ -87,3 +87,9 @@ def test_only_one_folder():
     assert ('folders' and 'files') in files['chapter_1']
     assert files['chapter_1']['folders'] == {}
     assert files['chapter_1']['files'] == expected
+
+
+def test_sort_folders():
+    module = {'root': {'folders': {'4': 4, '2': 2, '3': 3,'1': 1}}}
+    expected = {'1': 1, '2': 2, '3': 3, '4': 4}
+    assert directory_inspect.sort_folders(module['root']) == expected

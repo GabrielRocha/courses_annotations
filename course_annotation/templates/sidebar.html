@@ -17,7 +17,7 @@
             <ul class="nav side-menu">
                 <li><a><i class="fa fa-sitemap"></i> Folder Tree <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                        {% for folder, values in folders.items()|sort %}
+                        {% for folder, values in folders.items() %}
                             <li>
                             {% if values.folders %}
                                 <a>{{ folder }}<span class="fa fa-chevron-down"></span></a>
@@ -25,12 +25,12 @@
                                     <li class="sub_menu">
                                         <a href="/chapter/{{ folder }}/">.</a>
                                     </li>
-                                    {% for folder_level_two, values_level_two in values.folders.items()|sort %}
+                                    {% for folder_level_two, values_level_two in values.folders.items() %}
                                         {% if values_level_two.folders %}
                                             <li>
                                                 <a>{{ folder_level_two }}<span class="fa fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
-                                                    {% for folder_level_three in values_level_two.folders|sort %}
+                                                    {% for folder_level_three in values_level_two.folders %}
                                                         <li class="sub_menu">
                                                             <a href="/chapter/{{ folder }}/{{ folder_level_two }}/">
                                                                 .

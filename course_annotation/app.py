@@ -37,24 +37,23 @@ def index():
 def chapter(chapter_name):
     directory, files = find_directory(chapter_name, COURSE_STRUCTURE)
     context = {
-        'folders_directory': sorted(directory),
+        'folders_directory': directory,
         'folders': COURSE_STRUCTURE,
-        'files': sorted(files.items(), key=lambda x: x[0][1]),
+        'files': files.items(),
         'chapter': chapter_name}
     return render_template('chapter.html', **context)
 
 
 @app.route('/file/<path:filename>/')
 def send_files(filename):
-    print(COURSE_PATH, _get_file_path(filename))
     return send_from_directory(COURSE_PATH, _get_file_path(filename))
 
 
 def _get_file_path(filename):
     path = filename.split('/')
     if len(COURSE_STRUCTURE) == 1 and path[0] in COURSE_PATH:
-        return path[-1]
-    return filename
+        return path[-1].strip()
+    return filename.strip()
 
 
 @app.route('/save', methods=['POST'])

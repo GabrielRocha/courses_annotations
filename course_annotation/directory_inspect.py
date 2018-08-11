@@ -16,24 +16,34 @@ def get_files(path=settings.COURSE_PATH):
     directories = defaultdict(dict)
     for root, folder, files, _ in os.fwalk(path):
         files = [file for file in files if not re.search("^\.", file)]
-        root_without_path = root.replace(path, "").split("/")
-        if root_without_path[0]:
+        module_dir = root.replace(path, "").split("/")
+        if module_dir[0]:
             index = directories
-            for level, under_level in enumerate(root_without_path, start=1):
+            for under_level in module_dir:
                 if under_level in index:
                     index = index[under_level]['folders']
                 else:
                     get_folder_file(files, under_level, index)
+            module = directories[module_dir[0]]
+            module['folders'] = sort_folders(module)
         elif files:
             folder = root.split("/")[-2]
             get_folder_file(files, folder, directories)
     return directories
 
 
+def sort_folders(module):
+    folders = module['folders']
+    try:
+        return dict(sorted(folders.items(), key=lambda x: int(re.search('^\d+', x[0]).group())))
+    except AttributeError:
+        return folders
+
+
 def get_folder_file(files, root, directories):
     files = group_by_type(files)
     directories[root] = defaultdict(dict)
-    directories[root]['folders'] = defaultdict(dict)
+    directories[root]['folders'] = OrderedDict(defaultdict(dict))
     directories[root]['files'] = OrderedDict(sorted(files.items(), key=lambda x: x[0][1]))
     return directories
 
