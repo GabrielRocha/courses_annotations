@@ -90,7 +90,9 @@ def statistics(folders, parents=""):
         statistics_folder = statistics(values.get('folders', {}), parent)
         folder += statistics_folder['count_folder']
         videos += len(values['files']) + statistics_folder['count_videos']
-        if len(folder_videos) < 3 and values['files']:
+        if statistics_folder['folder_videos']:
+            folder_videos += statistics_folder['folder_videos']
+        if values['files'] and len(folder_videos) < 3:
             folder_videos.append((parent, item, values))
         for _, video in values['files'].items():
             if 'annotation' in video:
